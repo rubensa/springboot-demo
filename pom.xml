@@ -17,6 +17,8 @@
     <problem-spring-web.version>0.26.0</problem-spring-web.version>
     <testcontainers-postgresql.version>1.15.3</testcontainers-postgresql.version>
     <testcontainers-junit-jupiter.version>1.15.3</testcontainers-junit-jupiter.version>
+    <testcontainers-mockserver.version>1.15.3</testcontainers-mockserver.version>
+    <mockserver-netty.version>5.7.2</mockserver-netty.version>
   </properties>
   <dependencies>
     <dependency>
@@ -78,6 +80,18 @@
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${testcontainers-junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>mockserver</artifactId>
+      <version>${testcontainers-mockserver.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mock-server</groupId>
+      <artifactId>mockserver-netty</artifactId>
+      <version>${mockserver-netty.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
