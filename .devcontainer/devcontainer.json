@@ -1,0 +1,173 @@
+{
+  "name": "springboot-demo",
+  "dockerFile": "Dockerfile",
+  // Connect as an existing non-root user in the container.
+  // On Linux, by default, the container user's UID/GID will be updated to match your local user.
+  "remoteUser": "user",
+  "remoteEnv": {
+    // Timezone
+    "TZ": "Europe/Madrid",
+    // X11 Unix-domain socket
+    "DISPLAY": "unix${env:DISPLAY}"
+  },
+  "runArgs": [
+    // VSCode server extensions cache
+    "--mount",
+    "type=volume,source=vscode-server-extensions-cache,target=/home/user/.vscode-server/extensionsCache",
+    // SDKMan archives cache
+    "--mount",
+    "type=volume,source=sdkman-archives-cache,target=/opt/sdkman/archives",
+    // Maven repository cache
+    "--mount",
+    "type=volume,source=m2-repository-cache,target=/home/user/.m2/repository",
+    // Docker in Docker
+    "--mount",
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+    "--mount",
+    "type=bind,source=/usr/bin/docker,target=/usr/bin/docker",
+    // X11 Unix-domain socket
+    "--mount",
+    "type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix",
+    // Allow shared memory to avoid RAM access failures and rendering glitches due to X extesnion MIT-SHM
+    "--ipc=host",
+    // The kernel requires SYS_ADMIN for Chrome sand-box
+    "--cap-add",
+    "SYS_ADMIN",
+    // Limit to 4 cpus
+    "--cpus",
+    "4",
+    // Limit to 8GB ram
+    "--memory",
+    "8g",
+    // Unlimited swapp memory
+    "--memory-swap",
+    "-1"
+  ],
+  // Install Java and Node
+  "postCreateCommand": [
+    "/bin/bash",
+    "-i",
+    "-c",
+    "export JAVA_VERSION=11.0; export JAVA_INSTALL_VERSION=$(sdk list java | grep -o \"${JAVA_VERSION}\\.[0-9\\.]*hs-adpt\" | head -1); sdk install java $JAVA_INSTALL_VERSION || true; ln -s /opt/sdkman/candidates/java/$JAVA_INSTALL_VERSION /opt/sdkman/candidates/java/$JAVA_VERSION; export JAVA_VERSION=8.0; export JAVA_INSTALL_VERSION=$(sdk list java | grep -o \"${JAVA_VERSION}\\.[0-9\\.]*hs-adpt\" | head -1); yes | sdk install java $JAVA_INSTALL_VERSION || true; ln -s /opt/sdkman/candidates/java/$JAVA_INSTALL_VERSION /opt/sdkman/candidates/java/$JAVA_VERSION; curl -sSL https://raw.github.com/juven/maven-bash-completion/master/bash_completion.bash >> ~/.bashrc;"
+  ],
+  "extensions": [
+    // GIT support
+    "mhutchie.git-graph",
+    "eamodio.gitlens",
+    // History support
+    "xyz.local-history",
+    // Spring boot support
+    "pivotal.vscode-boot-dev-pack",
+    // JavaDoc
+    "madhavd1.javadoc-tools",
+    // Java Support
+    "dgileadi.java-decompiler",
+    "vscjava.vscode-java-pack",
+    // Lombok
+    "GabrielBB.vscode-lombok",
+    // XML Support
+    "redhat.vscode-xml"
+  ],
+  "settings": {
+    // Increase memory for Java Language Server
+    "java.jdt.ls.vmargs": "-noverify -Xmx3G -Xss128M -XX:+UseG1GC -XX:+UseStringDeduplication",
+    // Configure spring-boot 
+    "spring-boot.ls.java.home": "/opt/sdkman/candidates/java/11.0",
+    // Configure Maven
+    "maven.terminal.customEnv": [
+      {
+        "environmentVariable": "JAVA_HOME",
+        "value": "/opt/sdkman/candidates/java/8.0"
+      }
+    ],
+    "maven.executable.preferMavenWrapper": true,
+    // Configure Java
+    "java.configuration.runtimes": [
+      {
+        "name": "JavaSE-1.8",
+        "path": "/opt/sdkman/candidates/java/8.0",
+      },
+      {
+        "name": "JavaSE-11",
+        "path": "/opt/sdkman/candidates/java/11.0",
+      }
+    ],
+    "java.home": "/opt/sdkman/candidates/java/11.0",
+    // Exclude folders from import via glob patterns.
+    "java.import.exclusions": [
+      "**/node_modules/**",
+      "**/.metadata/**",
+      "**/archetype-resources/**",
+      "**/META-INF/maven/**",
+      "**/NBG-Server/**"
+    ],
+    // Configure glob patterns of file paths to exclude from file watching.
+    "files.watcherExclude": {
+      // Default values
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/.hg/store/**": true,
+      // Extra
+      "**/tmp/**": true,
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/dist/**": true,
+    },
+    // Configure glob patterns for excluding files and folders.
+    "files.exclude": {
+      // Default values
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      // Extra
+      "**/tmp/**": true,
+      "**/.gradle": true,
+      "**/.idea": true,
+      "**/.mvn": true,
+      "**/.classpath": true,
+      "**/.project": true,
+      "**/.settings": true,
+      "**/.factorypath": true
+    },
+    // Configure glob patterns for excluding files and folders in fulltext searches and quick open. Inherits all glob patterns from the `files.exclude` setting.
+    "search.exclude": {
+      // Default values
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/*.code-search": true,
+      // Extra
+      "**/target/**": true,
+      "**/dist/**": true,
+      "**/coverage": true
+    },
+    // Ensure VS Code uses the right one for terminals and tasks.
+    "terminal.integrated.shell.linux": "/bin/bash",
+    // Run interactive bash shell in VSCode integrated terminal
+    "terminal.integrated.shellArgs.linux": [
+      "-i"
+    ],
+    // Do not use current file indentation
+    "editor.detectIndentation": false,
+    // Format code on paste
+    "editor.formatOnPaste": true,
+    // Format code on file save
+    "editor.formatOnSave": true,
+    // Format code while typing
+    "editor.formatOnType": true,
+    // Disable Minimap
+    "editor.minimap.enabled": false,
+    // Show control characters
+    "editor.renderControlCharacters": true,
+    // Use 2 characters for tabs
+    "editor.tabSize": 2,
+    // Custom local history path
+    "local-history.path": "/tmp",
+    // Disable automatic port forwarding
+    "remote.autoForwardPorts": false,
+    // Disable preview editor
+    "workbench.editor.enablePreview": false
+  }
+}
