@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(initializers = { PostgreSQLContainerInitializer.class, MockServerContainerInitializer.class })
-public abstract class AbstractExternalIntegrationTest extends AbstractIntegrationTest {
+public abstract class AbstractControllerExternalIntegrationTest extends AbstractControllerIntegrationTest {
   @Autowired
   protected MockServerClient mockServerClient;
 

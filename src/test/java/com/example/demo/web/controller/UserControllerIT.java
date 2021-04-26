@@ -3,7 +3,7 @@ package com.example.demo.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.demo.common.AbstractIntegrationTest;
+import com.example.demo.common.AbstractControllerIntegrationTest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-public class UserControllerIT extends AbstractIntegrationTest {
+public class UserControllerIT extends AbstractControllerIntegrationTest {
   @Autowired
   private UserRepository userRepository;
 
@@ -36,7 +36,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
   @Test
   void shouldFetchAllUsers() throws Exception {
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users")).andExpect(MockMvcResultMatchers.status().isOk())
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/users")).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.size()", CoreMatchers.is(userList.size())));
   }
 
@@ -45,7 +45,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     User user = userList.get(0);
     Long userId = user.getId();
 
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{id}", userId))
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{id}", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(user.getEmail())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.password", CoreMatchers.is(user.getPassword())))
@@ -55,7 +55,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
   @Test
   void shouldCreateNewUser() throws Exception {
     User user = new User(null, "user@gmail.com", "pwd", "name");
-    this.mockMvc
+    mockMvc
         .perform(MockMvcRequestBuilders.post("/api/users").contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
         .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -69,7 +69,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
   void shouldReturn400WhenCreateNewUserWithoutEmail() throws Exception {
     User user = new User(null, null, "pwd", "Name");
 
-    this.mockMvc
+    mockMvc
         .perform(MockMvcRequestBuilders.post("/api/users").contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -91,7 +91,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     user.setPassword("newpwd");
     user.setName("NewName");
 
-    this.mockMvc
+    mockMvc
         .perform(MockMvcRequestBuilders.put("/api/users/{id}", user.getId()).contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(user)))
         .andExpect(MockMvcResultMatchers.status().isOk())
@@ -105,7 +105,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
   void shouldDeleteUser() throws Exception {
     User user = userList.get(0);
 
-    this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/{id}", user.getId()))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/{id}", user.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(user.getEmail())))
         .andExpect(MockMvcResultMatchers.jsonPath("$.password", CoreMatchers.is(user.getPassword())))

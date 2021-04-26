@@ -1,6 +1,6 @@
 package com.example.demo.web.controller;
 
-import com.example.demo.common.AbstractExternalIntegrationTest;
+import com.example.demo.common.AbstractControllerExternalIntegrationTest;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,7 @@ import org.mockserver.model.JsonBody;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-public class GithubUserControllerIT extends AbstractExternalIntegrationTest {
+public class GithubUserControllerIT extends AbstractControllerExternalIntegrationTest {
 
   @BeforeEach
   void setup() {
