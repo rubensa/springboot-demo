@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.web.client;
 
 import java.io.IOException;
 import java.net.URI;
