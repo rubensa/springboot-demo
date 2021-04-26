@@ -26,7 +26,7 @@ public class User implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotEmpty(message = "Email should not be empty")
+  @NotEmpty(message = "{NotEmpty.email.message}")
   @Column(nullable = false, unique = true, length = 100)
   private String email;
 
