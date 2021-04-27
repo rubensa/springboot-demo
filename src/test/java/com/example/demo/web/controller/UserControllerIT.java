@@ -88,7 +88,7 @@ public class UserControllerIT extends AbstractControllerIntegrationTest {
   }
 
   @Test
-  void shouldReturnSpanishErrorMessageLocalesIsSpanish() throws Exception {
+  void shouldReturnSpanishErrorMessageWhenAcceptLanguateIsSpanish() throws Exception {
     User user = new User(null, null, "pwd", "Name");
     Locale locale = new Locale.Builder().setLanguage("es").build();
 

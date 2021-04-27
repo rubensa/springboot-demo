@@ -1,5 +1,7 @@
 package com.example.demo.web.controller;
 
+import java.util.Locale;
+
 import com.example.demo.common.AbstractControllerExternalIntegrationTest;
 
 import org.hamcrest.CoreMatchers;
@@ -9,11 +11,11 @@ import org.mockserver.model.Header;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.model.JsonBody;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class GithubUserControllerIT extends AbstractControllerExternalIntegrationTest {
-
   @BeforeEach
   void setup() {
     mockServerClient.reset();
@@ -42,6 +44,25 @@ public class GithubUserControllerIT extends AbstractControllerExternalIntegratio
         .andExpect(MockMvcResultMatchers.jsonPath("$.status", CoreMatchers.is(404)))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.detail", CoreMatchers.is("Entity with identifier 'dummy' is not found")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id", CoreMatchers.is("dummy"))).andExpect(
+            MockMvcResultMatchers.jsonPath("$.instance", CoreMatchers.is("http://localhost/api/github/users/dummy")));
+    verifyMockServerHttpRequest("GET", "/users/.*", 1);
+  }
+
+  @Test
+  void shouldReturnSpanishErrorMessageWhenAcceptLanguateIsSpanish() throws Exception {
+    Locale locale = new Locale.Builder().setLanguage("es").build();
+    mockUserNotFoundFromGithub();
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/github/users/{username}", "dummy").header(HttpHeaders.ACCEPT_LANGUAGE,
+            locale.toLanguageTag()))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.header().string("Content-Type", CoreMatchers.is("application/problem+json")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.type", CoreMatchers.is("urn:problem-type:not-found")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.title", CoreMatchers.is("No encontrado")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.status", CoreMatchers.is(404)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail",
+            CoreMatchers.is("La entidad con identificador 'dummy' no se ha encontrado")))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id", CoreMatchers.is("dummy"))).andExpect(
             MockMvcResultMatchers.jsonPath("$.instance", CoreMatchers.is("http://localhost/api/github/users/dummy")));
     verifyMockServerHttpRequest("GET", "/users/.*", 1);
